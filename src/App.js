@@ -1,6 +1,9 @@
 import './App.css';
+import React from 'react';
 import { useEffect, useState } from "react";
 import PokemonCards from './components/pokemonCards';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { PokemonDetails } from './components/PokemonDetails';
 
 function App() {
   const [allPokemons, setAllPokemons] = useState([])
@@ -14,16 +17,6 @@ function App() {
     setLoadMore(data.next)
     setPrevPage(data.previous)
 
-    // async function createPokemonObject(results) {
-    //   results.forEach( async (pokemon) => {
-    //     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`) 
-    //     const data = await res.json()
-        
-    //     setAllPokemons(currentList => [...currentList, data]) // allPokemons.push(data)
-                
-
-    //   })
-
     const promises = data.results.map(async (pokemon) => {
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.name}`);
       const data = await res.json();
@@ -34,46 +27,38 @@ function App() {
       const orderedPokemon = pokemonData.sort((a, b) => a.id - b.id);
       setAllPokemons(orderedPokemon);
     });
-    }
-
-    //createPokemonObject(data.results)
-    //await console.log(allPokemons)
-  
+  }
 
   useEffect(() => {
     getAllPokemons(loadMore)
   }, [])
 
   return (
-
     <div className='app-container'>
       <h1>Pokedex</h1>
       
       <div className='pokemon-container'>
         <div className='all-container'>
-          {
-            allPokemons.map((pokemon, index)=> 
-              <PokemonCards
+          {allPokemons.map((pokemon, index)=> 
+            <PokemonCards
               id = {pokemon.id}
               name = {pokemon.name}
               image = {pokemon.sprites.front_default}
               type={pokemon.types[0].type.name}
               key={index}
-              />
+            />
           )}
         </div>
         <button className='load-more' onClick={() => getAllPokemons(loadMore)}>Load more</button>
         <button className='load-more' onClick={() => getAllPokemons(prev)}>Previous</button>
-
       </div>
+
+      <Routes>
+        <Route path="/" element={<App />} />
+        <Route path="/pokemon/:pokemonName" element={<PokemonDetails />} />
+      </Routes>
     </div>
-    // <div>
-    //   {allPokemons.map((pokemon, index) => (
-    //     <div key={index}>
-    //       <p>{pokemon.name}</p>
-    //     </div>
-    //   ))}
-    // </div>
-    );
+  );
 }
+
 export default App;
