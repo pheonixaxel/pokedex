@@ -2,8 +2,7 @@ import './App.css';
 import React from 'react';
 import { useEffect, useState } from "react";
 import PokemonCards from './components/pokemonCards';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
-import { PokemonDetails } from './components/PokemonDetails';
+import { Link, Outlet } from 'react-router-dom';
 
 function App() {
   const [allPokemons, setAllPokemons] = useState([])
@@ -34,6 +33,7 @@ function App() {
   }, [])
 
   return (
+    <>
     <div className='app-container'>
       <h1>Pokedex</h1>
       
@@ -52,12 +52,13 @@ function App() {
         <button className='load-more' onClick={() => getAllPokemons(loadMore)}>Load more</button>
         <button className='load-more' onClick={() => getAllPokemons(prev)}>Previous</button>
       </div>
-
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/pokemon/:pokemonName" element={<PokemonDetails />} />
-      </Routes>
     </div>
+    <Outlet />
+    <Link to="/about">About</Link>
+
+    <div>    <Outlet />
+</div>
+    </>
   );
 }
 
